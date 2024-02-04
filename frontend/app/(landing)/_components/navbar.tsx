@@ -5,6 +5,8 @@ import { useScrollTop } from "@/hooks/use-scroll-top";
 import { cn } from "@/lib/utils";
 import { Logo } from "./logo";
 import { ModeToggle } from "@/components/mode-toggle";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "../../../components/spinner";
 
 export const Navbar = () => {
   const { signInWithGoogle, authSignOut, isLoading, isAuthenticated, user } = UseAuth();
@@ -17,10 +19,13 @@ export const Navbar = () => {
       )}
     >
       <Logo />
-      <div className="md:ml-auto md:justify-end justify-between w-full flex items-center gap--x-2">
-        {isLoading && (<h1>Loading...</h1>)}
+      <div className="md:ml-auto md:justify-end justify-between w-full flex items-center gap--x-2 p-2">
+        {isLoading && (<Spinner />)}
         {!isAuthenticated && !isLoading && (
           <>
+            <Button className="mr-2" variant="ghost" size="sm">
+              Login
+            </Button>
           </>
         )}
         <ModeToggle />
