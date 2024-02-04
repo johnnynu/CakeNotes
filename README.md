@@ -24,7 +24,7 @@ CakeNotes is an all-in-one collaborative notetaking, coding, and whiteboarding t
 
 - **Frontend**: Next.js (TypeScript), React
 
-- **Backend**: Firebase (Go)
+- **Backend**: Firebase
 - **Database**: Firebase Realtime Database, Cloud SQL
 - **Authentication**: Firebase Authentication
 - **Containerization**: Docker, Google Kubernetes Engine (GKE)
