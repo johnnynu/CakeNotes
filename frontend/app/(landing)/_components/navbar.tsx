@@ -6,11 +6,25 @@ import { cn } from "@/lib/utils";
 import { Logo } from "./logo";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Spinner } from "../../../components/spinner";
+import { TextAlignJustifyIcon } from "@radix-ui/react-icons";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useRouter } from "next/navigation";
 
 export const Navbar = () => {
-  const { signInWithGoogle, authSignOut, isLoading, isAuthenticated, user } = UseAuth();
+  const router = useRouter();
+  const { signInWithGoogle, authSignOut, isLoading, isAuthenticated, user } =
+    UseAuth();
   const scrolled = useScrollTop();
+
   return (
     <div
       className={cn(
@@ -20,12 +34,44 @@ export const Navbar = () => {
     >
       <Logo />
       <div className="md:ml-auto md:justify-end justify-between w-full flex items-center gap--x-2 p-2">
-        {isLoading && (<Spinner />)}
+        {isLoading && <Spinner />}
         {!isAuthenticated && !isLoading && (
           <>
-            <Button className="mr-2" variant="ghost" size="sm">
+            <Button
+              className="mr-2"
+              variant="ghost"
+              size="sm"
+              onClick={signInWithGoogle}
+            >
               Login
             </Button>
+          </>
+        )}
+        {isAuthenticated && user && (
+          <>
+            <Avatar>
+              <AvatarImage src={user.photoURL || undefined} alt="User Avatar" />
+              <AvatarFallback>{user.displayName?.charAt(0)}</AvatarFallback>
+            </Avatar>
+
+            <div style={{ marginRight: "8px" }} />
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <Button className="mr-2" variant="ghost" size="sm">
+                  <TextAlignJustifyIcon />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuLabel>
+                  {user?.displayName || "user"}
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>Profile</DropdownMenuItem>
+                <DropdownMenuItem onClick={authSignOut}>
+                  Sign Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </>
         )}
         <ModeToggle />
