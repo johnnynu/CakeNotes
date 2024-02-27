@@ -1,6 +1,6 @@
-# CakeNotes
+# 🍰 CakeNotes
 
-🍰 CakeNotes is an all-in-one productivity tool that features notetaking, whiteboarding, and in-app coding. (Currently in development)
+CakeNotes is an all-in-one productivity tool that features notetaking, whiteboarding, and in-app coding. (Currently in development)
 
 ## Features
 * Real-time collaboration
