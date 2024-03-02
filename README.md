@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://github.com/johnnynu/CakeNotes/blob/main/cakenotes%20logo.png" alt="CakeNotes" width="200px">
+</p>
+
 # 🍰 CakeNotes
 
 CakeNotes is an all-in-one productivity tool that features notetaking, whiteboarding, and in-app coding. (Currently in development)
