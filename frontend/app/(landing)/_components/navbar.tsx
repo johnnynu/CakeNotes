@@ -17,13 +17,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useRouter } from "next/navigation";
 
 export const Navbar = () => {
-  const router = useRouter();
   const { signInWithGoogle, authSignOut, isLoading, isAuthenticated, user } =
     UseAuth();
   const scrolled = useScrollTop();
+
+  const handleLogin = async () => {
+    await signInWithGoogle();
+  };
 
   return (
     <div
@@ -41,7 +43,7 @@ export const Navbar = () => {
               className="mr-2"
               variant="ghost"
               size="sm"
-              onClick={signInWithGoogle}
+              onClick={handleLogin}
             >
               Login
             </Button>

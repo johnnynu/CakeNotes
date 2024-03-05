@@ -1,14 +1,18 @@
 import {
   Auth,
   getAuth,
+  getRedirectResult,
   GoogleAuthProvider,
   onAuthStateChanged,
   signInWithPopup,
+  signInWithRedirect, // Changed from signInWithPopup
   signOut,
   User,
 } from "firebase/auth";
 import { firebaseApp } from "./firebase";
 import { useState, useEffect } from "react";
+import { FirebaseError } from "firebase/app";
+import { useRouter } from "next/navigation";
 
 // Define the UseAuth interface
 // UseAuth is an interface that describes the shape of our authentication object.
@@ -29,6 +33,7 @@ interface UseAuth {
 // This function implements the UseAuth interface.
 // It provides the actual logic for each authentication method declared in the UseAuth interface.
 const UseAuth = (): UseAuth => {
+  const router = useRouter();
   const auth: Auth = getAuth(firebaseApp);
   const [isLoading, setIsLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -37,36 +42,43 @@ const UseAuth = (): UseAuth => {
   // useEffect is used to set up a listener for changes to the authentication state.
   // onAuthStateChanged is a Firebase method that observes the user's sign-in state.
   useEffect(() => {
-    // Listener that keeps track of the user's authentication status
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // User is signed in
-        setIsAuthenticated(true);
-        setUser(user);
-      } else {
-        // User is signed out
-        setIsAuthenticated(false);
-        setUser(null);
+    const handleRedirect = async () => {
+      setIsLoading(true);
+      try {
+        const result = await getRedirectResult(auth); // Capture the sign-in result
+        if (result) {
+          // Process successful login
+          const credentials = GoogleAuthProvider.credentialFromResult(result);
+          const googleToken = credentials?.accessToken;
+          const user = result.user;
+          setUser(user);
+          router.push("/home");
+        }
+      } catch (error) {
+        //  Handle errors
+      } finally {
+        setIsLoading(false);
       }
-    });
+    };
 
-    // Clean up the listener on unmount
-    return () => unsubscribe();
-  }, [auth]);
+    handleRedirect(); // Call the function to handle the result
+  }, [auth, router]);
 
   // Google authentication logic
   const signInWithGoogle = async (): Promise<void> => {
     try {
       setIsLoading(true);
       const provider = new GoogleAuthProvider();
-      const res = await signInWithPopup(auth, provider);
-      // SSO success creates a Google Access Token that we can use.
-      const credentials = GoogleAuthProvider.credentialFromResult(res);
-      const googleToken = credentials?.accessToken;
-      // Signed-in user info
-      const user = res.user;
+      await signInWithRedirect(auth, provider);
     } catch (error) {
-      console.log("Google SSO Failed");
+      setIsLoading(false); // Set isLoading to false
+      if (error instanceof FirebaseError) {
+        if (error.code === "auth/popup-closed-by-user") {
+          console.log("Google SSO Popup Closed by User");
+        }
+      } else {
+        console.log("Google SSO Failed");
+      }
     } finally {
       setIsLoading(false);
     }
