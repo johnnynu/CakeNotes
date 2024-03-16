@@ -18,13 +18,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export const Navbar = () => {
-  const { signInWithGoogle, authSignOut, isLoading, isAuthenticated, user } =
-    UseAuth();
+  const { authSignOut, isLoading, isAuthenticated, user } = UseAuth();
   const scrolled = useScrollTop();
-
-  const handleLogin = async () => {
-    await signInWithGoogle();
-  };
 
   return (
     <div
@@ -35,16 +30,9 @@ export const Navbar = () => {
     >
       <div className="md:ml-auto md:justify-end justify-between w-full flex items-center gap--x-2 p-2">
         {isLoading && <Spinner />}
-        {!isAuthenticated && !isLoading && (
+        {isAuthenticated && !isLoading && (
           <>
-            <Button
-              className="mr-2"
-              variant="ghost"
-              size="sm"
-              onClick={handleLogin}
-            >
-              Login
-            </Button>
+            <div className="flex-grow text-center">CakeNotes</div>
           </>
         )}
         {isAuthenticated && user && (

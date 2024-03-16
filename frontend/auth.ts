@@ -4,7 +4,6 @@ import {
   getRedirectResult,
   GoogleAuthProvider,
   onAuthStateChanged,
-  signInWithPopup,
   signInWithRedirect, // Changed from signInWithPopup
   signOut,
   User,
@@ -64,6 +63,21 @@ const UseAuth = (): UseAuth => {
     handleRedirect(); // Call the function to handle the result
   }, [auth, router]);
 
+  // This useEffect is used to set up a listener for changes to the authentication state.
+  // onAuthStateChanged is a Firebase method that observes the user's sign-in state.
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setIsAuthenticated(true);
+        setUser(user);
+      } else {
+        setIsAuthenticated(false);
+        setUser(null);
+      }
+    });
+    return () => unsubscribe();
+  }, [auth]);
+
   // Google authentication logic
   const signInWithGoogle = async (): Promise<void> => {
     try {
@@ -88,6 +102,7 @@ const UseAuth = (): UseAuth => {
     try {
       setIsLoading(true);
       await signOut(auth);
+      router.push("/");
     } catch (error) {
       console.error("Error signing out: ", error);
     } finally {
